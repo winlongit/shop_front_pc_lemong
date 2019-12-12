@@ -19,8 +19,9 @@
                  :class="{'defalut-address':item.isDefault}"></a>
             </div>
             <div class="operation">
-              <el-button type="primary" icon="edit" size="small"  @click="update(item)"></el-button>
-              <el-button type="danger" icon="delete" size="small" :data-id="item.addressId" @click="del(item.addressId,i)"></el-button>
+              <el-button type="primary" icon="edit" size="small" @click="update(item)"></el-button>
+              <el-button type="danger" icon="delete" size="small" :data-id="item._id"
+                         @click="del(item._id,i)"></el-button>
             </div>
           </div>
         </div>
@@ -58,11 +59,12 @@
   </div>
 </template>
 <script>
-  import { addressList, addressUpdate, addressAdd, addressDel } from '/api/goods'
+  import {addressList, addressUpdate, addressAdd, addressDel} from '/api/goods'
   import YButton from '/components/YButton'
   import YPopup from '/components/popup'
   import YShelf from '/components/shelf'
-  import { getStore } from '/utils/storage'
+  import {getStore} from '/utils/storage'
+
   export default {
     data () {
       return {
@@ -119,18 +121,25 @@
       changeDef (item) {
         if (!item.isDefault) {
           item.isDefault = true
+          item.addressId = item._id
+          item.userId = item.user_id
           this._addressUpdate(item)
         }
         return false
       },
       // 保存
       save (p) {
-        this.popupOpen = false
-        if (p.addressId) {
-          this._addressUpdate(p)
+        const reg = /^1[3456789]\d{9}$/
+        if (reg.test(this.msg.tel)) {
+          this.popupOpen = false
+          if (p.addressId) {
+            this._addressUpdate(p)
+          } else {
+            delete p.addressId
+            this._addressAdd(p)
+          }
         } else {
-          delete p.addressId
-          this._addressAdd(p)
+          this.message('手机号不正确')
         }
       },
       // 删除
@@ -152,7 +161,7 @@
           this.msg.tel = item.tel
           this.msg.streetName = item.streetName
           this.msg.isDefault = item.isDefault
-          this.msg.addressId = item.addressId
+          this.msg.addressId = item._id
         } else {
           this.popupTitle = '新增收货地址'
           this.msg.userName = ''
@@ -185,21 +194,25 @@
     background: #eee;
     border-bottom: 1px solid #dbdbdb;
     border-bottom-color: rgba(0, 0, 0, .08);
+
     .name {
       float: left;
       text-align: left;
     }
+
     span {
       width: 137px;
       float: left;
       text-align: center;
       color: #838383;
     }
+
     .address {
-      margin-left: 115px; 
+      margin-left: 115px;
     }
+
     .tel {
-      margin-left: 195px; 
+      margin-left: 195px;
     }
   }
 
@@ -208,28 +221,36 @@
     align-items: center;
     height: 115px;
     text-align: center;
+
     .name {
       width: 106px;
     }
+
     .address-msg {
       flex: 1;
     }
+
     .telephone {
       width: 160px;
     }
+
     .defalut {
       width: 80px;
+
       > a {
         text-align: center;
         /*display: none;*/
       }
     }
+
     .operation {
       width: 135px;
+
       a {
         padding: 10px 5px;
       }
     }
+
     &:hover {
       .defalut > a {
         display: block;
@@ -252,6 +273,7 @@
     > div {
       text-align: left;
       margin-bottom: 15px;
+
       > input {
         width: 100%;
         height: 50px;

@@ -19,7 +19,7 @@
         <!--商品-->
         <div class="goods-box w">
           <!-- 调用 mall-goods 组件，实现点击商品统一跳转 -->
-          <mall-goods v-for="(item,i) in goods" :key="i" :msg="item"></mall-goods>
+          <mall-goods v-for="(item,i) in goods" :key="i" :product="item"></mall-goods>
         </div>
 
         <el-pagination
@@ -63,11 +63,12 @@
   </div>
 </template>
 <script>
-  import { getAllGoods } from '/api/goods.js'
-  import { recommend } from '/api/index.js'
+  import {getAllGoods} from '/api/goods.js'
+  import {recommend} from '/api/index.js'
   import mallGoods from '/components/mallGoods'
   import YButton from '/components/YButton'
   import YShelf from '/components/shelf'
+
   export default {
     data () {
       return {
@@ -112,15 +113,16 @@
         let params = {
           params: {
             page: this.currentPage,
-            size: this.pageSize,
+            page_size: this.pageSize,
             sort: this.sort,
-            priceGt: this.min,
-            priceLte: this.max,
+            price_min: this.min,
+            price_max: this.max,
             cid: cid,
             type: type,
             category: category
           }
         }
+        console.log('_getAllGoods_getAllGoods')
         getAllGoods(params).then(res => {
           if (res.success === true) {
             this.total = res.result.total
@@ -163,7 +165,9 @@
     },
     watch: {
       $route (to, from) {
+        console.log(to.fullPath)
         if (to.fullPath.indexOf('/goods?type=') >= 0) {
+          console.log('goods这里watch到了')
           this.cId = to.query.cid
           this.type = to.query.type
           this.category = to.query.category
@@ -196,33 +200,41 @@
   .nav {
     height: 60px;
     line-height: 60px;
+
     > div {
       display: flex;
       align-items: center;
+
       a {
         padding: 0 15px;
         height: 100%;
         @extend %block-center;
         font-size: 12px;
         color: #999;
+
         &.active {
           color: #5683EA;
         }
+
         &:hover {
           color: #5683EA;
         }
       }
+
       input {
         @include wh(80px, 30px);
         border: 1px solid #ccc;
       }
+
       input + input {
         margin-left: 10px;
       }
     }
+
     .price-interval {
       padding: 0 15px;
       @extend %block-center;
+
       input[type=number] {
         border: 1px solid #ccc;
         text-align: center;
@@ -245,17 +257,18 @@
     font-size: 30px;
     display: flex;
     flex-direction: column;
-    .no-data{
+
+    .no-data {
       align-self: center;
     }
   }
 
-  .img-item{
+  .img-item {
     display: flex;
     flex-direction: column;
   }
 
-  .el-pagination{
+  .el-pagination {
     align-self: flex-end;
     margin: 3vw 10vw 2vw;
   }
@@ -269,12 +282,12 @@
 
   .recommend {
     display: flex;
+
     > div {
       flex: 1;
       width: 25%;
     }
   }
-
 
 
 </style>

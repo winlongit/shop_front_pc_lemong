@@ -18,6 +18,7 @@ const support = () => import('/page/User/children/support.vue')
 const checkout = () => import('/page/Checkout/checkout.vue')
 const payment = () => import('/page/Order/payment.vue')
 const paysuccess = () => import('/page/Order/paysuccess.vue')
+const payfail = () => import('/page/Order/payfail.vue')
 const Thanks = () => import('/page/Thanks/thanks.vue')
 const Search = () => import('/page/Search/search.vue')
 const RefreshSearch = () => import('/page/Refresh/refreshsearch.vue')
@@ -56,6 +57,7 @@ export default new Router({
       component: order,
       children: [
         {path: 'paysuccess', name: 'paysuccess', component: paysuccess},
+        {path: 'payfail', name: 'payfail', component: payfail},
         {path: 'payment', name: 'payment', component: payment},
         {path: '/search', name: 'search', component: Search},
         {path: 'alipay', name: 'alipay', component: Alipay},

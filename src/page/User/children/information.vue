@@ -3,7 +3,7 @@
     <y-shelf title="账户资料">
       <div slot="content">
         <div class="avatar-box">
-          <div class=img-box><img :src="userInfo.info.file" alt=""></div>
+          <div class=img-box><img :src="userInfo.info.avatar" alt=""></div>
           <div class="r-box">
             <h3 style="margin-left: 13px;">修改头像</h3>
             <y-button text="上传头像" classStyle="main-btn" style="margin: 0;" @btnClick="editAvatar()"></y-button>
@@ -169,7 +169,12 @@
         }
       },
       editAvatar () {
-        this.editAvatarShow = true
+        this.$notify({
+          title: '上传头像...',
+          message: '该功能正在开发中...',
+          type: 'success'
+        })
+        // this.editAvatarShow = true
       },
       realTime (data) {
         this.previews = data

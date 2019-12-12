@@ -7,8 +7,8 @@
             <div class="gray-sub-title cart-title">
               <div class="first">
                 <div>
-                  <span class="date" v-text="item.createDate"></span>
-                  <span class="order-id"> 订单号： <a @click="orderDetail(item.orderId)">{{item.orderId}}</a> </span>
+                  <span class="date" v-text="formateDate(item.create_time.$date)"></span>
+                  <span class="order-id"> 订单号： {{item._id.$oid}} </span>
                 </div>
                 <div class="f-bc">
                   <span class="price">单价</span>
@@ -18,22 +18,25 @@
               </div>
               <div class="last">
                 <span class="sub-total">实付金额</span>
-                <span class="order-detail"> <a @click="orderDetail(item.orderId)">查看详情 ><em class="icon-font"></em></a> </span>
+                <span class="order-detail"> <a @click="orderDetail(item._id.$oid)">查看详情 ><em class="icon-font"></em></a> </span>
               </div>
             </div>
             <div class="pr">
               <div class="cart" v-for="(good,j) in item.goodsList" :key="j">
                 <div class="cart-l" :class="{bt:j>0}">
                   <div class="car-l-l">
-                    <div class="img-box"><a @click="goodsDetails(good.productId)"><img :src="good.productImg" alt=""></a></div>
-                    <div class="ellipsis"><a style="color: #626262;" @click="goodsDetails(good.productId)">{{good.productName}}</a></div>
+                    <div class="img-box"><a @click="goodsDetails(good.productId)"><img :src="good.productImg"
+                                                                                       alt=""></a></div>
+                    <div class="ellipsis"><a style="color: #626262;"
+                                             @click="goodsDetails(good.productId)">{{good.name}}</a></div>
                   </div>
                   <div class="cart-l-r">
-                    <div>¥ {{Number(good.salePrice).toFixed(2)}}</div>
+                    <div>¥ {{Number(good.salePrice / 100).toFixed(2)}}</div>
                     <div class="num">{{good.productNum}}</div>
                     <div class="type">
-                      <el-button style="margin-left:20px" @click="_delOrder(item.orderId,i)" type="danger" size="small" v-if="j<1" class="del-order">删除此订单</el-button>
-                      <!-- <a @click="_delOrder(item.orderId,i)" href="javascript:;" v-if="j<1" class="del-order">删除此订单</a> -->
+                      <el-button style="margin-left:20px" @click="_delOrder(item._id.$oid,i)" type="danger" size="small"
+                                 v-if="j<1" class="del-order">删除此订单
+                      </el-button>
                     </div>
                   </div>
                 </div>
@@ -43,11 +46,11 @@
                 </div>
               </div>
               <div class="prod-operation pa" style="right: 0;top: 0;">
-                <div class="total">¥ {{item.orderTotal}}</div>
-                <div v-if="item.orderStatus === '0'">
-                  <el-button @click="orderPayment(item.orderId)" type="primary" size="small">现在付款</el-button>
+                <div class="total">¥ {{Number(item.total_fee / 100).toFixed(2)}}</div>
+                <div v-if="item.status === '支付中'">
+                  <el-button @click="orderPayment(item._id.$oid)" type="primary" size="small">现在付款</el-button>
                 </div>
-                <div class="status" v-if="item.orderStatus !== '0'"> {{getOrderStatus(item.orderStatus)}}  </div>
+                <div class="status" v-if="item.orderStatus !== '0'"> {{item.status}}</div>
               </div>
             </div>
           </div>
@@ -73,9 +76,10 @@
   </div>
 </template>
 <script>
-  import { orderList, delOrder } from '/api/goods'
+  import {orderList, delOrder} from '/api/goods'
   import YShelf from '/components/shelf'
-  import { getStore } from '/utils/storage'
+  import {getStore} from '/utils/storage'
+
   export default {
     data () {
       return {
@@ -102,6 +106,16 @@
         this.currentPage = val
         this._orderList()
       },
+      formateDate (timeStampString) {
+        let date = new Date(timeStampString)
+        let Y = date.getFullYear() + '-'
+        let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
+        let D = date.getDate() + ' '
+        let h = date.getHours() + ':'
+        let m = date.getMinutes() + ':'
+        let s = date.getSeconds()
+        return (Y + M + D + h + m + s)
+      },
       orderPayment (orderId) {
         window.open(window.location.origin + '#/order/payment?orderId=' + orderId)
       },
@@ -115,21 +129,6 @@
             orderId: orderId
           }
         })
-      },
-      getOrderStatus (status) {
-        if (status === '1') {
-          return '支付审核中'
-        } else if (status === '2') {
-          return '待发货'
-        } else if (status === '3') {
-          return '待收货'
-        } else if (status === '4') {
-          return '交易成功'
-        } else if (status === '5') {
-          return '交易关闭'
-        } else if (status === '6') {
-          return '支付失败'
-        }
       },
       _orderList () {
         let params = {
@@ -160,7 +159,7 @@
         })
       }
     },
-    created () {
+    mounted () {
       this.userId = getStore('userId')
       this._orderList()
     },
@@ -182,14 +181,17 @@
     font-size: 12px;
     color: #666;
     display: flex;
+
     span {
       display: inline-block;
       height: 100%;
     }
+
     .first {
       display: flex;
       justify-content: space-between;
       flex: 1;
+
       .f-bc {
         > span {
           width: 112px;
@@ -197,11 +199,13 @@
         }
       }
     }
+
     .last {
       width: 230px;
       text-align: center;
       display: flex;
       border-left: 1px solid #ccc;
+
       span {
         flex: 1;
       }
@@ -225,14 +229,17 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 24px;
+
     &:hover {
       .del-order {
         display: block;
       }
     }
+
     .del-order {
       display: none;
     }
+
     .cart-l {
       display: flex;
       align-items: center;
@@ -240,6 +247,7 @@
       padding: 15px 0;
       justify-content: space-between;
       position: relative;
+
       &:before {
         position: absolute;
         content: ' ';
@@ -249,32 +257,40 @@
         background-color: #EFEFEF;
         height: 100%;
       }
+
       .ellipsis {
         margin-left: 20px;
         width: 220px;
       }
+
       .img-box {
         border: 1px solid #EBEBEB;
       }
+
       img {
         display: block;
         @include wh(80px);
       }
+
       .cart-l-r {
         display: flex;
+
         > div {
           text-align: center;
           width: 112px;
         }
       }
+
       .car-l-l {
         display: flex;
         align-items: center;
       }
     }
+
     .cart-r {
       width: 230px;
       display: flex;
+
       span {
         text-align: center;
         flex: 1;
@@ -288,10 +304,12 @@
     align-items: center;
     justify-content: center;
     width: 254px;
+
     div {
       width: 100%;
       text-align: center;
     }
+
     div:last-child {
       padding-right: 24px;
     }

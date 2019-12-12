@@ -28,14 +28,14 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/member/*': {
-        target: 'http://ailemong.com:5000',  // 请求本地 需要xmall后台项目 默认http://127.0.0.1:5000 需要加http://不然代理不到，好蠢
-        changeOrigin: true  // 如果接口跨域，需要进行这个参数配置
-      },
-      '/goods/*': {
-        target: 'http://ailemong.com:5000',  // 请求本地 需要xmall后台项目 默认http://127.0.0.1:5000
-        changeOrigin: true
-      }
+      // '/member/*': {
+      //   target: 'http://ailemong.com:5000',  // 请求本地 需要xmall后台项目 默认http://127.0.0.1:5000 需要加http://不然代理不到，好蠢
+      //   changeOrigin: true  // 如果接口跨域，需要进行这个参数配置
+      // },
+      // '/goods/*': {
+      //   target: 'http://ailemong.com:5000',  // 请求本地 需要xmall后台项目 默认http://127.0.0.1:5000
+      //   changeOrigin: true
+      // }
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

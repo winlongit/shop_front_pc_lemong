@@ -1,7 +1,8 @@
 import axios from 'axios'
+// axios 默认是用 json 传数据的
 axios.defaults.timeout = 10000
-axios.defaults.headers.post['Content-Type'] = 'application/x-www=form-urlencoded'
-// axios.defaults.baseURL = process.env.API_ROOT
+// axios.defaults.headers.post['Content-Type'] = 'application/x-www=form-urlencoded'
+axios.defaults.baseURL = process.env.API_ROOT
 
 export default {
   fetchGet (url, params = {}) {

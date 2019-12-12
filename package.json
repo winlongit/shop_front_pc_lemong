@@ -24,7 +24,8 @@
     "vue-lazyload": "^1.2.2",
     "vue-qr": "^2.2.1",
     "vue-router": "^2.8.1",
-    "vuex": "^2.5.0"
+    "vuex": "^2.5.0",
+    "vuex-persistedstate": "^2.7.0"
   },
   "devDependencies": {
     "autoprefixer": "^6.7.2",

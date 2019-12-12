@@ -8,9 +8,10 @@
         <div class="account-sidebar">
           <div class="avatar gray-box ">
             <div>
-              <img :src="userInfo.info.file"> <h5>
+              <img :src="userInfo.info.avatar"/> <h5>
               {{userInfo.info.username}}</h5></div>
             <div class="box-inner">
+              <!-- 侧边选项条-->
               <ul class="account-nav">
                 <li v-for="(item,i) in nav" :key='i' :class="{current:item.name===title}"
                     @click="tab(item)">
@@ -32,7 +33,8 @@
 <script>
   import YFooter from '/common/footer'
   import YHeader from '/common/header'
-  import { mapState } from 'vuex'
+  import {mapState} from 'vuex'
+
   export default {
     data () {
       return {
@@ -42,8 +44,8 @@
           {name: '账户资料', path: 'information'},
           {name: '收货地址', path: 'addressList'},
           {name: '我的优惠', path: 'coupon'},
-          {name: '售后服务', path: 'support'},
-          {name: '以旧换新', path: 'aihuishou'}
+          {name: '售后服务', path: 'support'}
+          // {name: '以旧换新', path: 'aihuishou'}
         ],
         editAvatar: true
       }
@@ -70,6 +72,7 @@
     },
     watch: {
       $route (to) {
+        console.log(this.userInfo)
         let path = to.path.split('/')[2]
         this.nav.forEach(item => {
           if (item.path === path) {
@@ -95,27 +98,33 @@
   .account-sidebar {
     width: 210px;
     border-radius: 6px;
+
     .avatar {
       padding-top: 20px;
       border-radius: 10px;
       text-align: center;
+
       img {
         width: 168px;
         height: 168px;
       }
+
       h5 {
         font-size: 18px;
         line-height: 48px;
         font-weight: 700;
       }
     }
+
     .account-nav {
       padding-top: 15px;
+
       li {
         position: relative;
         height: 48px;
         border-top: 1px solid #EBEBEB;
         line-height: 48px;
+
         &:hover {
           a {
             position: relative;
@@ -127,9 +136,11 @@
           }
 
         }
+
         a {
           display: block;
         }
+
         &.current {
           a {
             position: relative;

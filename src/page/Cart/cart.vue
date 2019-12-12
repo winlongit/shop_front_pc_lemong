@@ -48,7 +48,9 @@
                       <!--商品数量-->
                       <div>
                         <!--总价格-->
-                        <div class="subtotal" style="font-size: 14px">¥ {{item.salePrice * item.productNum}}</div>
+                        <div class="subtotal" style="font-size: 14px">¥ {{Number(item.salePrice *
+                          item.productNum).toFixed(2)}}
+                        </div>
                         <!--数量-->
                         <buy-num :num="item.productNum"
                                  :id="item.productId"
@@ -57,7 +59,7 @@
                                    display: flex;
                                    align-items: center;
                                    justify-content: center;"
-                                 :limit="item.limitNum"
+                                 :limit=100
                                  @edit-num="EditNum"
                         >
                         </buy-num>
@@ -117,13 +119,14 @@
   </div>
 </template>
 <script>
-  import { getCartList, cartEdit, editCheckAll, cartDel, delCartChecked } from '/api/goods'
-  import { mapMutations, mapState } from 'vuex'
+  import {getCartList, cartEdit, editCheckAll, cartDel, delCartChecked} from '/api/goods'
+  import {mapMutations, mapState} from 'vuex'
   import YButton from '/components/YButton'
   import YHeader from '/common/header'
   import YFooter from '/common/footer'
   import BuyNum from '/components/buynum'
-  import { getStore } from '/utils/storage'
+  import {getStore} from '/utils/storage'
+
   export default {
     data () {
       return {
@@ -134,7 +137,7 @@
     },
     computed: {
       ...mapState(
-        ['cartList']
+        ['cartList', 'login']
       ),
       // 是否全选
       checkAllFlag () {
@@ -164,7 +167,7 @@
             totalPrice += (item.productNum * item.salePrice)
           }
         })
-        return totalPrice
+        return totalPrice.toFixed(2)
       },
       // 选中的商品数量
       checkNum () {
@@ -198,24 +201,12 @@
       },
       // 修改购物车
       _cartEdit (userId, productId, productNum, checked) {
-        cartEdit(
-          {
-            userId,
-            productId,
-            productNum,
-            checked
-          }
-        ).then(res => {
-          if (res.success === true) {
-            this.EDIT_CART(
-              {
-                productId,
-                checked,
-                productNum
-              }
-            )
-          }
-        })
+        if (this.login && userId) {
+          // 有登陆就后台也需要改，没有登录就只需要改本地的缓存就好了
+          cartEdit({userId, productId, productNum, checked})
+        }
+        // 没有登录，但是也要修改本地缓存
+        this.EDIT_CART({productId, checked, productNum})
       },
       // 修改购物车
       editCart (type, item) {
@@ -225,6 +216,7 @@
           let productNum = item.productNum
           // 勾选
           if (type === 'check') {
+            // 到了勾选这里了，怎么没有变啊
             let newChecked = checked === '1' ? '0' : '1'
             this._cartEdit(this.userId, productId, productNum, newChecked)
           }
@@ -251,7 +243,7 @@
           if (res.success === true) {
             res.result.forEach(item => {
               if (item.checked === '1') {
-                let productId = item.productId
+                let productId = item.product_id
                 this.EDIT_CART({productId})
               }
             })
@@ -267,6 +259,8 @@
     mounted () {
       this.userId = getStore('userId')
       this.INIT_BUYCART()
+      console.log('进入cart.vue,下面打印购物车里面的商品')
+      console.log(this.cartList)
     },
     components: {
       YButton,
@@ -283,6 +277,7 @@
     min-height: 600px;
     padding: 0 0 25px;
     margin: 0 auto;
+
     .gray-box {
       position: relative;
       margin-bottom: 30px;
@@ -292,6 +287,7 @@
       border: 1px solid #dcdcdc;
       border-color: rgba(0, 0, 0, .14);
       box-shadow: 0 3px 8px -6px rgba(0, 0, 0, .1);
+
       .title {
         padding-left: 30px;
         position: relative;
@@ -309,8 +305,10 @@
         color: #333;
       }
     }
+
     .ui-cart {
       padding-bottom: 91px;
+
       .cart-table-title {
         position: relative;
         z-index: 1;
@@ -321,10 +319,12 @@
         background: #eee;
         border-bottom: 1px solid #dbdbdb;
         border-bottom-color: rgba(0, 0, 0, .08);
+
         .name {
           float: left;
           text-align: left;
         }
+
         span {
           width: 137px;
           float: right;
@@ -332,11 +332,13 @@
           color: #838383;
         }
       }
+
       .cart-group.divide {
         .cart-items {
           border-top: 1px dashed #eee;
         }
       }
+
       .cart-items {
         position: relative;
         height: 140px;
@@ -346,12 +348,15 @@
           padding: 58px 0 0;
           font-size: 12px;
           line-height: 24px;
+
           .items-delete-btn {
             background-image: url(../../../static/images/delete-btn-icon_a35bf2437e@2x.jpg);
+
             &:hover {
               background-position: 0 -36px;
             }
           }
+
           .items-delete-btn {
             display: block;
             width: 24px;
@@ -367,9 +372,11 @@
             transition: none;
           }
         }
+
         .subtotal {
           font-weight: 700;
         }
+
         .item-cols-num,
         .operation,
         .price1,
@@ -382,9 +389,11 @@
           line-height: 140px;
         }
       }
+
       .cart-group.divide .cart-top-items:first-child .cart-items {
         border-top: none;
       }
+
       .items-choose {
         position: absolute;
         left: -74px;
@@ -395,6 +404,7 @@
         font-size: 12px;
         color: #999;
       }
+
       .items-thumb {
         position: relative;
         margin-top: 30px;
@@ -402,10 +412,12 @@
         width: 80px;
         height: 80px;
       }
+
       img {
         width: 80px;
         height: 80px;
       }
+
       .cart-items .items-thumb > a, .ui-cart .cart-items .items-thumb > i {
         position: absolute;
         left: 0;
@@ -417,21 +429,25 @@
         border: 0 solid rgba(255, 255, 255, .1);
         box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06);
       }
+
       .name {
         width: 380px;
         margin-left: 20px;
         color: #323232;
         display: table;
+
         a {
           color: #333;
           font-size: 16px;
         }
       }
+
       .name-table {
         display: table-cell;
         vertical-align: middle;
         height: 140px;
       }
+
       .attribute, .name p {
         color: #999;
         font-size: 12px;
@@ -445,6 +461,7 @@
 
   .page-cart {
     padding-top: 40px;
+
     .fix-bottom {
       height: 90px;
       width: 100%;
@@ -457,6 +474,7 @@
       background: linear-gradient(#fdfdfd, #f9f9f9);
       border-top: 1px solid #e9e9e9;
       box-shadow: 0 -3px 8px rgba(0, 0, 0, .04);
+
       .cart-bottom-bg {
         height: 80px;
         /*background: url(../img/store/library/cart-wrapper-bg_4c8003c76e.jpg) repeat-x;*/
@@ -464,15 +482,18 @@
         border-radius: 0 0 8px 8px;
       }
     }
+
     .cart-bar-operation {
       float: left;
       padding: 35px 26px;
       font-size: 12px;
     }
+
     .blue-checkbox-new {
       float: left;
       margin-right: 9px;
     }
+
     .choose-all, .delete-choose-goods, .selected-count {
       float: left;
       height: 20px;
@@ -480,6 +501,7 @@
       cursor: pointer;
       position: relative;
     }
+
     .blue-checkbox-new, .blue-checkbox-new.checkbox-disable, .blue-checkbox-new.checkbox-on {
       display: inline-block;
       position: relative;
@@ -497,46 +519,57 @@
     .blue-checkbox-new.checkbox-on, .choose-checkbox-on .blue-checkbox-new {
       background: url(../../../static/images/checkbox-new_631a56a4f6.png) no-repeat 0 0;
     }
+
     .delete-choose-goods {
       position: relative;
       margin-left: 21px;
       color: #bbb;
     }
+
     .shipping {
       float: right;
       padding: 20px 30px;
     }
+
     .shipping-box {
       display: inline-block;
       padding-top: 1px;
       margin-right: 10px;
     }
+
     .shipping-total {
       display: inline-block;
       border-left: 1px solid #e1e1e1;
       padding: 0 20px;
+
       .shipping-price {
         width: 155px;
         padding-right: 0;
       }
+
       &.shipping-num i {
         width: 28px;
         display: inline-block;
         text-align: center;
       }
+
       h4 {
         color: #323232;
+
         > i {
           font-size: 18px;
           font-weight: 700;
         }
+
         i, span {
           color: #d44d44;
         }
 
       }
+
       h5 {
         color: #959595;
+
         > i {
           font-size: 16px;
           font-weight: 700;
@@ -548,9 +581,11 @@
     .shipping-total.shipping-num {
       text-align: right;
     }
+
     .shipping-total:first-child {
       border: none;
     }
+
     .big-main-btn {
       float: right;
       height: 48px;

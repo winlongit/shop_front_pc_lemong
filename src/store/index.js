@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import mutations from './mutations'
 import action from './action'
+import persistedState from 'vuex-persistedstate'
+
 Vue.use(Vuex)
 
 const state = {
@@ -21,5 +23,6 @@ const state = {
 export default new Vuex.Store({
   state,
   action,
-  mutations
+  mutations,
+  plugins: [persistedState()]
 })

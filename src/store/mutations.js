@@ -6,9 +6,11 @@ import {
   ADD_ANIMATION,
   SHOW_CART,
   REDUCE_CART,
-  EDIT_CART
+  EDIT_CART,
+  USER_LOGOUT
 } from './mutation-types'
-import { setStore, getStore } from '../utils/storage'
+import {setStore, getStore, removeStore} from '../utils/storage'
+
 export default {
   // 网页初始化时从本地缓存获取购物车数据
   [INIT_BUYCART] (state) {
@@ -117,6 +119,16 @@ export default {
     state.userInfo = info
     state.login = true
     setStore('userInfo', info)
+    setStore('login', true)
+  },
+  // 用户退出登录信息
+  [USER_LOGOUT] (state) {
+    state.userInfo = null
+    state.login = false
+    state.cartList = []
+    removeStore('buyCart')
+    removeStore('userInfo')
+    setStore('login', false)
   },
   // 获取用户信息
   [GET_USERINFO] (state, info) {

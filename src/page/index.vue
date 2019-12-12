@@ -16,7 +16,8 @@
 <script>
   import YHeader from '/common/header'
   import YFooter from '/common/footer'
-  import { mapState, mapMutations } from 'vuex'
+  import {mapState, mapMutations} from 'vuex'
+
   export default {
     data () {
       return {}
@@ -82,9 +83,11 @@
     width: 45px;
     z-index: 29;
     height: 45px;
+
     div {
       @extend .bn;
     }
+
     img {
       border-radius: 50%;
       width: 100%;
@@ -93,6 +96,6 @@
       @extend .bn;
     }
   }
-  
+
 
 </style>

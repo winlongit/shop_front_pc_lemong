@@ -29,18 +29,16 @@
             </div>
             <div class="nav-aside" ref="aside" :class="{fixed:st}">
               <!-- 头像模块 个人中心 登录 -->
-            <div class="user pr">
+              <div class="user pr">
                 <!-- 跳转到个人中心 -->
-                <!-- <router-link to="/user">个人中心</router-link> -->
-                <!--用户信息显示 未登录的时候不显示-->
-                <!-- 用 false 暂时先来取消这个用户登录管理 -->
-                <div v-if="false">
+                <a @click="toUser">个人中心</a>
                 <div class="nav-user-wrapper pa" v-if="login">
                   <div class="nav-user-list">
                     <ul>
                       <!--头像-->
                       <li class="nav-user-avatar">
                         <div>
+                          <!--用户头像-->
                           <span class="avatar" :style="{backgroundImage:'url('+userInfo.info.file+')'}">
                           </span>
                         </div>
@@ -67,12 +65,12 @@
                     </ul>
                   </div>
                 </div>
-                </div>
               </div>
+
               <!-- 购物车模块 -->
               <div class="shop pr" @mouseover="cartShowState(true)" @mouseout="cartShowState(false)"
                    ref="positionMsg">
-                 <!-- 跳转购物车，先隐藏，这个是点击购物车图标的触发 ,需要的话，注释掉 <a></a> 然后把  router-ilnk 放出来-->
+                <!-- 跳转购物车，先隐藏，这个是点击购物车图标的触发 ,需要的话，注释掉 <a></a> 然后把  router-ilnk 放出来-->
                 <router-link to="/cart"></router-link>
                 <!-- <a></a> -->
                 <span class="cart-num">
@@ -142,7 +140,7 @@
                   <a @click="changGoods(-2)" :class="{active:choosePage===-2}">全部</a>
                 </li>
                 <li v-for="(item,i) in navList" :key="i">
-                  <a @click="changGoods(i, item)" :class="{active:i===choosePage}">{{item.picUrl}}</a>
+                  <a @click="changGoods(i, item)" :class="{active:i===choosePage}">{{item.category}}</a>
                 </li>
               </ul>
               <div></div>
@@ -155,13 +153,14 @@
 </template>
 <script>
   import YButton from '/components/YButton'
-  import { mapMutations, mapState } from 'vuex'
-  import { getCartList, cartDel, getQuickSearch } from '/api/goods'
-  import { loginOut, navList } from '/api/index'
-  import { setStore, getStore, removeStore } from '/utils/storage'
+  import {mapMutations, mapState} from 'vuex'
+  import {getCartList, cartDel, getQuickSearch} from '/api/goods'
+  import {loginOut, navList} from '/api/index'
+  import {setStore, getStore} from '/utils/storage'
   // import store from '../store/'
   import 'element-ui/lib/theme-default/index.css'
-  export default{
+
+  export default {
     data () {
       return {
         user: {},
@@ -190,11 +189,11 @@
         this.cartList && this.cartList.forEach(item => {
           totalPrice += (item.productNum * item.salePrice)
         })
-        return totalPrice
+        return totalPrice.toFixed(2)
       },
       // 计算数量
       totalNum () {
-        var totalNum = 0
+        let totalNum = 0
         this.cartList && this.cartList.forEach(item => {
           totalNum += (item.productNum)
         })
@@ -202,7 +201,7 @@
       }
     },
     methods: {
-      ...mapMutations(['ADD_CART', 'INIT_BUYCART', 'ADD_ANIMATION', 'SHOW_CART', 'REDUCE_CART', 'RECORD_USERINFO', 'EDIT_CART']),
+      ...mapMutations(['ADD_CART', 'INIT_BUYCART', 'ADD_ANIMATION', 'SHOW_CART', 'REDUCE_CART', 'RECORD_USERINFO', 'EDIT_CART', 'USER_LOGOUT']),
       handleIconClick (ev) {
         this.$notify({
           title: '正在开发中...',
@@ -211,21 +210,31 @@
         })
         // 下面是搜索的代码,我暂时不用搜索吧,后面再完善.
 
-/*        if (this.$route.path === '/search') {
-          this.$router.push({
-            path: '/refreshsearch',
-            query: {
-              key: this.input
-            }
-          })
+        /*        if (this.$route.path === '/search') {
+                  this.$router.push({
+                    path: '/refreshsearch',
+                    query: {
+                      key: this.input
+                    }
+                  })
+                } else {
+                  this.$router.push({
+                    path: '/search',
+                    query: {
+                      key: this.input
+                    }
+                  })
+                } */
+      },
+      // TODO 跳转到个人中心,先不跳转，这个个人中心也是个大坑
+      toUser () {
+        // 没有登录，就跳转登录页面
+        console.log('toUser,header.vue', this.login)
+        if (!this.login) {
+          this.$router.push({path: '/login'})
         } else {
-          this.$router.push({
-            path: '/search',
-            query: {
-              key: this.input
-            }
-          })
-        } */
+          this.$router.push({path: '/user'})
+        }
       },
       showError (m) {
         this.$message.error({
@@ -239,6 +248,7 @@
       // 点击标签栏,跳转不同 首页/全部/其他分类
       changGoods (v, item) {
         this.changePage(v)
+        console.log(item)
         if (v === -1) {
           this.$router.push({
             path: '/'
@@ -251,11 +261,11 @@
           // 站外跳转
           // window.open(item.fullUrl)
           // 站内跳转
+          console.log('header这里push到goods了')
           this.$router.push({
             path: '/goods',
             query: {
-              type: item.type,
-              category: item.category
+              type: item.category
             }
           })
         }
@@ -320,6 +330,7 @@
         getCartList({userId: getStore('userId')}).then(res => {
           if (res.success === true) {
             setStore('buyCart', res.result)
+            console.log('获取到cartList后，存入缓存 header.vue', res)
           }
           // 重新初始化一次本地数据
         }).then(this.INIT_BUYCART)
@@ -353,8 +364,6 @@
           this.positionL = num.getBoundingClientRect().left
           this.positionT = num.getBoundingClientRect().top
           this.ADD_ANIMATION({cartPositionL: this.positionL, cartPositionT: this.positionT})
-        } else {
-          return
         }
       },
       // 退出登陆
@@ -365,7 +374,7 @@
           }
         }
         loginOut(params).then(res => {
-          removeStore('buyCart')
+          this.USER_LOGOUT()
           window.location.href = '/'
         })
       },
@@ -515,6 +524,7 @@
       height: 100%;
       display: flex;
       align-items: center;
+
       > a {
         background: url(/static/images/winlong/logo.png) no-repeat 50%;
         background-size: cover;
@@ -524,34 +534,42 @@
         background-position: 0 0;
       }
     }
+
     .nav-list {
       display: flex;
       justify-content: center;
       align-items: center;
       margin-right: 22px;
-      .el-autocomplete{
+
+      .el-autocomplete {
         width: 305px;
       }
+
       a {
         width: 110px;
         color: #c8c8c8;
         display: block;
         font-size: 14px;
         padding: 0 25px;
+
         &:hover {
           color: #fff;
         }
       }
-      a:nth-child(2){
+
+      a:nth-child(2) {
         // width: 5vw;
         margin-left: -10px;
       }
+
       // a:nth-child(3){
       //   width: 5vw;
       // }
     }
+
     .nav-aside {
       position: relative;
+
       &:before {
         background: #333;
         background: hsla(0, 0%, 100%, .2);
@@ -564,6 +582,7 @@
         // top: 4px;
         left: 0;
       }
+
       &.fixed {
         width: 262px;
         position: fixed;
@@ -577,6 +596,7 @@
         transform: translate3d(0, 59px, 0);
         -webkit-transition: -webkit-transform .3s cubic-bezier(.165, .84, .44, 1);
         transition: transform .3s cubic-bezier(.165, .84, .44, 1);
+
         .user {
           &:hover {
             a:before {
@@ -584,6 +604,7 @@
             }
           }
         }
+
         .shop {
           &:hover {
             a:before {
@@ -597,18 +618,22 @@
     .right-box {
       display: flex;
     }
+
     .nav-aside {
       display: flex;
       align-items: center;
     }
+
     // 用户
     .user {
       margin-left: 41px;
       width: 36px;
+
       &:hover {
         a:before {
           background-position: -5px 0;
         }
+
         .nav-user-wrapper {
           top: 18px;
           visibility: visible;
@@ -617,11 +642,13 @@
           transition: opacity .15s ease-out;
         }
       }
+
       > a {
         position: relative;
         @include wh(36px, 20px);
         display: block;
         text-indent: -9999px;
+
         &:before {
           content: " ";
           position: absolute;
@@ -634,6 +661,7 @@
         }
 
       }
+
       li + li {
         text-align: center;
         position: relative;
@@ -642,20 +670,24 @@
         height: 44px;
         color: #616161;
         font-size: 12px;
+
         &:hover {
           background: #fafafa;
         }
+
         a {
           display: block;
           color: #616161;
         }
       }
+
       .nav-user-avatar {
         > div {
           position: relative;
           margin: 0 auto 8px;
           @include wh(46px);
           text-align: center;
+
           &:before {
             content: "";
             position: absolute;
@@ -666,6 +698,7 @@
             border-radius: 50%;
             box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06);
           }
+
           .avatar {
             border-radius: 50%;
             display: block;
@@ -675,6 +708,7 @@
           }
 
         }
+
         .name {
           margin-bottom: 16px;
           font-size: 12px;
@@ -683,31 +717,37 @@
           color: #757575;
         }
       }
+
       .nav-user-wrapper {
         width: 168px;
         transform: translate(-50%);
         left: 50%;
       }
+
       .nav-user-list {
         width: 168px;
+
         &:before {
           left: 50%;
         }
 
       }
     }
+
     .shop {
       position: relative;
       float: left;
       margin-left: 21px;
       width: 61px;
       z-index: 99;
+
       &:hover {
         a:before {
           content: " ";
           background-position: 0 -22px;
         }
       }
+
       .nav-user-wrapper.active {
         top: 18px;
         visibility: visible;
@@ -715,6 +755,7 @@
         -webkit-transition: opacity .15s ease-out;
         transition: opacity .15s ease-out;
       }
+
       > a {
         position: absolute;
         left: 0;
@@ -723,6 +764,7 @@
         display: block;
         right: 0;
         z-index: 1;
+
         &:before {
           display: block;
           @include wh(30px, 100%);
@@ -732,6 +774,7 @@
           background-position: -150px -22px;
         }
       }
+
       .cart-num {
         position: relative;
         display: block;
@@ -740,6 +783,7 @@
         min-width: 30px;
         text-indent: 0;
         line-height: 20px;
+
         > i {
           background: #eb746b;
           background-image: -webkit-linear-gradient(#eb746b, #e25147);
@@ -753,6 +797,7 @@
           border-radius: 10px;
           color: #fff;
           font-size: 12px;
+
           &.no {
             background: #969696;
             background-image: -webkit-linear-gradient(#A4A4A4, #909090);
@@ -762,55 +807,67 @@
         }
 
       }
+
       .nav-user-wrapper {
         right: 0;
         width: 360px;
+
         .nav-user-list {
           &:before {
             right: 34px;
           }
         }
       }
+
       .nav-user-list {
         padding: 0;
         width: 100%;
+
         .full {
           border-radius: 8px;
           overflow: hidden;
         }
+
         .nav-cart-items {
           max-height: 363px;
           overflow-x: hidden;
           overflow-y: auto;
         }
+
         .cart-item {
           height: 120px;
           width: 100%;
           overflow: hidden;
           border-top: 1px solid #f0f0f0;
+
           &:hover {
             background: #fcfcfc;
+
             .del {
               display: block;
             }
           }
 
         }
+
         li:first-child .cart-item:first-child {
           border-top: none;
           border-radius: 8px 8px 0 0;
           overflow: hidden;
         }
+
         .cart-item-inner {
           padding: 20px;
           position: relative;
         }
+
         .item-thumb {
           position: relative;
           float: left;
           width: 80px;
           height: 80px;
           border-radius: 3px;
+
           &:before {
             content: "";
             position: absolute;
@@ -824,6 +881,7 @@
             box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .06);
             border-radius: 3px;
           }
+
           img {
             display: block;
             @include wh(80px, 80px);
@@ -831,10 +889,12 @@
             overflow: hidden;
           }
         }
+
         .item-desc {
           margin-left: 98px;
           display: table;
           @include wh(205px, 80px);
+
           h4 {
             color: #000;
             width: 185px;
@@ -846,6 +906,7 @@
             line-height: 16px;
             margin-bottom: 10px;
           }
+
           .attrs span {
             position: relative;
             display: inline-block;
@@ -854,36 +915,44 @@
             line-height: 14px;
             color: #999;
           }
+
           .attrs span:last-child {
             margin-right: 0;
           }
+
           h6 {
             color: #cacaca;
             font-size: 12px;
             line-height: 14px;
             margin-top: 20px;
+
             span {
               display: inline-block;
               font-weight: 700;
               color: #cacaca;
             }
+
             .price-icon, .price-num {
               color: #d44d44;
             }
+
             .price-num {
               margin-left: 5px;
               font-size: 14px;
             }
+
             .item-num {
               margin-left: 10px;
             }
           }
 
         }
+
         .cart-cell {
           display: table-cell;
           vertical-align: middle;
         }
+
         .del {
           display: none;
           overflow: hidden;
@@ -893,6 +962,7 @@
           transform: translateY(-50%);
         }
       }
+
       .nav-cart-total {
         box-sizing: content-box;
         position: relative;
@@ -904,27 +974,32 @@
         box-shadow: inset 0 -1px 0 hsla(0, 0%, 100%, .5), 0 -3px 8px rgba(0, 0, 0, .04);
         background: -webkit-linear-gradient(#fafafa, #f5f5f5);
         background: linear-gradient(#fafafa, #f5f5f5);
+
         p {
           margin-bottom: 4px;
           line-height: 16px;
           font-size: 12px;
           color: #c1c1c1;
         }
+
         h5 {
           line-height: 20px;
           font-size: 14px;
           color: #6f6f6f;
+
           span {
             font-size: 18px;
             color: #de4037;
             display: inline-block;
             font-weight: 700;
           }
+
           span:first-child {
             font-size: 12px;
             margin-right: 5px;
           }
         }
+
         h6 {
           position: absolute;
           right: 20px;
@@ -961,6 +1036,7 @@
     opacity: 0;
     visibility: hidden;
     top: -3000px;
+
     .nav-user-list {
       position: relative;
       padding-top: 20px;
@@ -970,6 +1046,7 @@
       border-radius: 8px;
       box-shadow: 0 20px 40px rgba(0, 0, 0, .15);
       z-index: 10;
+
       &:before {
         position: absolute;
         content: " ";
@@ -988,6 +1065,7 @@
     height: 75px;
     background: #f7f7f7;
     box-shadow: 0 2px 4px rgba(0, 0, 0, .04);
+
     &.fixed {
       position: fixed;
       z-index: 21;
@@ -999,16 +1077,19 @@
       background-image: -webkit-linear-gradient(#fff, #f1f1f1);
       background-image: linear-gradient(#fff, #f1f1f1);
     }
+
     .nav-sub-wrapper {
       padding: 23px 0;
       height: 61px;
       position: relative;
+
       &.fixed {
         padding: 0;
         height: 100%;
         display: flex;
         align-items: center;
       }
+
       &:after {
         content: " ";
         position: absolute;
@@ -1024,38 +1105,47 @@
         transition: opacity .3s ease-in;
       }
     }
+
     .w {
       display: flex;
       justify-content: space-between;
     }
+
     .nav-list2 {
       height: 28px;
       line-height: 28px;
       display: flex;
       align-items: center;
       height: 100%;
+
       li:first-child {
         padding-left: 0;
+
         a {
           padding-left: 10px;
         }
       }
+
       li {
         position: relative;
         float: left;
         padding-left: 2px;
+
         a {
           display: block;
           padding: 0 10px;
           color: #666;
+
           &.active {
             font-weight: bold;
           }
         }
+
         a:hover {
           color: #5683EA;
         }
       }
+
       li:before {
         content: ' ';
         position: absolute;
@@ -1078,6 +1168,7 @@
     /*display: flex;*/
     text-align: center;
     position: relative;
+
     p {
       padding-top: 185px;
       color: #333333;

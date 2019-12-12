@@ -2,37 +2,39 @@
   <div class="good-item">
     <div style="">
       <div class="good-img">
-        <a @click="openProductDeatil(msg.productId)">
-          <img v-lazy="msg.productImageBig" :alt="msg.productName" :key="msg.productImageBig">
+        <a @click="openProductDeatil(productId)">
+          <img v-lazy="product.swiper_pics[0]" :alt="product.name" :key="product.id">
         </a>
       </div>
-      <h6 class="good-title" v-html="msg.productName">{{msg.productName}}</h6>
-      <h3 class="sub-title ellipsis">{{msg.subTitle}}</h3>
+      <h6 class="good-title" v-html="product.name">{{product.name}}</h6>
+      <h3 class="sub-title ellipsis">{{product.title}}</h3>
       <div class="good-price pr">
         <div class="ds pa">
-          <a @click="openProductDeatil(msg.productId)">
+          <a @click="openProductDeatil(productId)">
             <y-button text="查看详情" style="margin: 0 5px"></y-button>
           </a>
           <y-button text="加入购物车"
                     style="margin: 0 5px"
-                    @btnClick="addCart(msg.productId,msg.salePrice,msg.productName,msg.productImageBig)"
+                    @btnClick="addCart(productId,Number(product.cur_price/100).toFixed(2),product.name,product.swiper_pics[0])"
                     classStyle="main-btn"
           ></y-button>
         </div>
-        <p><span style="font-size:14px">￥</span>{{Number(msg.salePrice).toFixed(2)}}</p>
+        <p><span style="font-size:14px">会员价:￥</span>{{Number(product.cur_price/100).toFixed(2)}} <span
+          class="line-through"> ￥{{Number(product.origin_price/100).toFixed(2)}}</span></p>
       </div>
     </div>
   </div>
 </template>
 <script>
   import YButton from '/components/YButton'
-  import { addCart } from '/api/goods.js'
-  import { mapMutations, mapState } from 'vuex'
-  import { getStore } from '/utils/storage'
+  import {addCart} from '/api/goods.js'
+  import {mapMutations, mapState} from 'vuex'
+  import {getStore} from '/utils/storage'
+
   export default {
     props: {
-      msg: {
-        salePrice: 0
+      product: {
+        cur_price: null
       }
     },
     data () {
@@ -44,7 +46,8 @@
         // 在当前窗口打开 如果提供了 path，params 会被忽略
         // this.$router.push({path: 'goodsDetails', params: {productId: '11111'}}) 这样写是错误的,
         // 应该使用命名的路由，或者query
-        this.$router.push({path: 'goodsDetails', query: {productId: '11111'}})
+        console.log('detail query product id : ', id)
+        this.$router.push({path: 'goodsDetails', query: {productId: id}})
         // 新打开一个标签页
         // window.open('//' + window.location.host + '/#/goodsDetails?productId=' + id)
       },
@@ -72,7 +75,10 @@
       }
     },
     computed: {
-      ...mapState(['login', 'showMoveImg', 'showCart'])
+      ...mapState(['login', 'showMoveImg', 'showCart']),
+      productId () {
+        return this.product._id.$oid
+      }
     },
     mounted () {
     },
@@ -90,16 +96,20 @@
     width: 25%;
     transition: all .5s;
     height: 430px;
+
     &:hover {
       transform: translateY(-3px);
       box-shadow: 1px 1px 20px #999;
+
       .good-price p {
         display: none;
       }
+
       .ds {
         display: flex;
       }
     }
+
     .ds {
       @extend %block-center;
       width: 100%;
@@ -113,6 +123,7 @@
         display: block;
       }
     }
+
     .good-price {
       margin: 15px 0;
       height: 30px;
@@ -123,6 +134,17 @@
       font-size: 18px;
       font-weight: 700;
     }
+
+    .line-through {
+      font-size: 12px;
+      color: #A69999;
+      text-decoration: line-through;
+      -moz-text-decoration-color: #A69999;
+      -moz-text-decoration-style: wavy;
+      -webkit-text-decoration-color: #A69999; //chrome 24.0 开始支持
+      -webkit-text-decoration-style: wavy; //chrome 24.0 开始支持
+    }
+
     .good-title {
       line-height: 1.2;
       font-size: 16px;
@@ -132,6 +154,7 @@
       text-align: center;
       overflow: hidden;
     }
+
     h3 {
       text-align: center;
       line-height: 1.2;

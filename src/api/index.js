@@ -1,7 +1,7 @@
 import http from './public'
 // 登陆
 export const userLogin = (params) => {
-  return http.fetchPost('/member/login', params)
+  return http.fetchPost('/api/v1/user/login', params)
 }
 // 退出登陆
 export const loginOut = (params) => {
@@ -13,7 +13,7 @@ export const userInfo = (params) => {
 }
 // 注册账号
 export const register = (params) => {
-  return http.fetchPost('/member/register', params)
+  return http.fetchPost('/api/v1/user/register', params)
 }
 // 上传图片
 export const upload = (params) => {
@@ -33,7 +33,7 @@ export const productHome = (params) => {
 }
 // 首页接口 分类小标题List
 export const navList = (params) => {
-  return http.fetchGet('/goods/navList', params)
+  return http.fetchGet('/api/v1/product/get_types', params)
 }
 // 推荐板块
 export const recommend = (params) => {

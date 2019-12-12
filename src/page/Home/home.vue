@@ -1,75 +1,81 @@
 <template>
-  <div class="home">
-  <div v-loading="loading" element-loading-text="加载中..." style="min-height: 35vw;" v-if="!error">
-    <!-- 幻灯片 三幅图 type=-->
-    <div class="banner" >
-      <div class="bg" ref="bg"
-        @mouseover="bgOver($refs.bg)" @mousemove="bgMove($refs.bg,$event)" @mouseout="bgOut($refs.bg)">
-        <transition name="fade">
-          <div v-for="(item, i) in banner" v-if="i===mark" :key="i" style="position:absolute" @click="linkTo(item)" @mouseover="stopTimer" @mouseout="startTimer">
-            <!-- picUrl1,2,3是堆叠上去的 -->
-            <img v-if="item.picUrl" class="img1" :src="item.picUrl"/>
-            <img v-if="item.picUrl2"  class="img2 a" :src="item.picUrl2"/>
-            <img v-if="item.picUrl3"  class="img3 b" :src="item.picUrl3"/>
+  <div>
+    <div class="home">
+      <div v-loading="loading" element-loading-text="加载中..." style="min-height: 35vw;" v-if="!error">
+        <!-- 幻灯片 三幅图 type=-->
+        <div class="banner">
+          <div class="bg" ref="bg"
+               @mouseover="bgOver($refs.bg)" @mousemove="bgMove($refs.bg,$event)" @mouseout="bgOut($refs.bg)">
+            <transition name="fade">
+              <div v-for="(item, i) in banner" v-if="i===mark" :key="i" style="position:absolute" @click="linkTo(item)"
+                   @mouseover="stopTimer" @mouseout="startTimer">
+                <!-- picUrl1,2,3是堆叠上去的 -->
+                <img v-if="item.picUrl" class="img1" :src="item.picUrl"/>
+                <img v-if="item.picUrl2" class="img2 a" :src="item.picUrl2"/>
+                <img v-if="item.picUrl3" class="img3 b" :src="item.picUrl3"/>
+              </div>
+            </transition>
           </div>
-        </transition>
-      </div>
-      <div class="page">
-        <ul class="dots">
-          <li class="dot-active" v-for="(item, i) in banner" :class="{ 'dot':i!=mark }" :key="i" @click="change(i)"></li>
-        </ul>
-      </div>
-    </div>
-    <!-- 正文部分，商品 -->
-    <div v-for="(item,i) in home" :key="i">
-      <!-- 活动商品 4个图 type=1 就是4幅图并排排列-->
-      <div class="activity-panel" v-if="item.type === 1">
-        <ul class="box">
-          <li class="content" v-for="(iitem,j) in item.panelContents" :key="j" @click="linkTo(iitem)">
-            <img class="i" :src="iitem.picUrl">
-            <a class="cover-link"></a>
-          </li>
-        </ul>
-      </div>
-      <!-- 热门商品 2个图，作者这里放的2个水图 白底图 type=2就是并排2个图占一行-->
-      <section class="w mt30 clearfix" v-if="item.type === 2">
-        <y-shelf :title="item.name">
-          <div slot="content" class="hot">
-            <mall-goods :msg="iitem" v-for="(iitem,j) in item.panelContents" :key="j"></mall-goods>
+          <div class="page">
+            <ul class="dots">
+              <li class="dot-active" v-for="(item, i) in banner" :class="{ 'dot':i!=mark }" :key="i"
+                  @click="change(i)"></li>
+            </ul>
           </div>
-        </y-shelf>
-      </section>
-      <!-- 官方精选 多图，白底图 type=3 就是7幅图，其中1幅大图占2格，6幅占剩下的6格，一起站2行-->
-      <section class="w mt30 clearfix" v-if="item.type === 3">
-        <y-shelf :title="item.name">
-          <div slot="content" class="floors" >
-            <div class="imgbanner" v-for="(iitem,j) in item.panelContents" :key="j" v-if="iitem.type === 2 || iitem.type === 3" @click="linkTo(iitem)">
-              <img v-lazy="iitem.picUrl">
-              <a class="cover-link"></a>
-            </div>
-            <mall-goods :msg="iitem" v-for="(iitem,j) in item.panelContents" :key="j+'key'" v-if="iitem.type != 2 && iitem.type != 3"></mall-goods>
+        </div>
+        <!-- 正文部分，商品 -->
+        <div v-for="(item,i) in home" :key="i">
+          <!-- 活动商品 4个图 type=1 就是4幅图并排排列-->
+          <div class="activity-panel" v-if="item.type === 1">
+            <ul class="box">
+              <li class="content" v-for="(iitem,j) in item.panelContents" :key="j" @click="linkTo(iitem)">
+                <img class="i" :src="iitem.picUrl">
+                <a class="cover-link"></a>
+              </li>
+            </ul>
           </div>
-        </y-shelf>
-      </section>
+          <!-- 热门商品 2个图，作者这里放的2个水图 白底图 type=2就是并排2个图占一行-->
+          <section class="w mt30 clearfix" v-if="item.type === 2">
+            <y-shelf :title="item.name">
+              <div slot="content" class="hot">
+                <mall-goods :msg="iitem" v-for="(iitem,j) in item.panelContents" :key="j"></mall-goods>
+              </div>
+            </y-shelf>
+          </section>
+          <!-- 官方精选 多图，白底图 type=3 就是7幅图，其中1幅大图占2格，6幅占剩下的6格，一起站2行-->
+          <section class="w mt30 clearfix" v-if="item.type === 3">
+            <y-shelf :title="item.name">
+              <div slot="content" class="floors">
+                <div class="imgbanner" v-for="(iitem,j) in item.panelContents" :key="j"
+                     v-if="iitem.type === 2 || iitem.type === 3" @click="linkTo(iitem)">
+                  <img v-lazy="iitem.picUrl">
+                  <a class="cover-link"></a>
+                </div>
+                <mall-goods :msg="iitem" v-for="(iitem,j) in item.panelContents" :key="j+'key'"
+                            v-if="iitem.type != 2 && iitem.type != 3"></mall-goods>
+              </div>
+            </y-shelf>
+          </section>
 
+        </div>
       </div>
-    </div>
 
-    <div class="no-info" v-if="error">
-      <div class="no-data">
-        <img src="/static/images/error.png">
-        <br> 抱歉！出错了...
+      <div class="no-info" v-if="error">
+        <div class="no-data">
+          <img src="/static/images/error.png">
+          <br> 抱歉！出错了...
+        </div>
       </div>
-    </div>
 
-  </div>
+    </div>
   </div>
 </template>
 <script>
-  import { productHome } from '/api/index.js'
+  import {productHome} from '/api/index.js'
   import YShelf from '/components/shelf'
   import product from '/components/product'
   import mallGoods from '/components/mallGoods'
+
   export default {
     data () {
       return {
@@ -189,7 +195,8 @@
     font-size: 30px;
     display: flex;
     flex-direction: column;
-    .no-data{
+
+    .no-data {
       align-self: center;
     }
   }
@@ -197,6 +204,7 @@
   .fade-enter-active, .fade-leave-active {
     transition: opacity .5s;
   }
+
   .fade-enter, .fade-leave-to {
     opacity: 0;
   }
@@ -206,11 +214,13 @@
     width: 100%;
     top: 470px;
     z-index: 30;
+
     .dots {
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: center;
+
       .dot-active {
         display: inline-block;
         width: 15px;
@@ -220,6 +230,7 @@
         margin-right: 10px;
         cursor: pointer;
       }
+
       .dot {
         opacity: 0.2;
       }
@@ -229,17 +240,19 @@
   .activity-panel {
     width: 1220px;
     margin: 0 auto;
+
     .box {
       overflow: hidden;
       position: relative;
       z-index: 0;
       margin-top: 25px;
       box-sizing: border-box;
-      border: 1px solid rgba(0,0,0,.14);
+      border: 1px solid rgba(0, 0, 0, .14);
       border-radius: 8px;
       background: #fff;
-      box-shadow: 0 3px 8px -6px rgba(0,0,0,.1);
+      box-shadow: 0 3px 8px -6px rgba(0, 0, 0, .1);
     }
+
     .content {
       float: left;
       position: relative;
@@ -248,23 +261,26 @@
       height: 200px;
       text-align: center;
     }
-    .content ::before{
+
+    .content ::before {
       position: absolute;
       top: 0;
       left: 0;
       z-index: 1;
       box-sizing: border-box;
       border-left: 1px solid #f2f2f2;
-      border-left: 1px solid rgba(0,0,0,.1);
+      border-left: 1px solid rgba(0, 0, 0, .1);
       width: 100%;
       height: 100%;
       content: "";
       pointer-events: none;
     }
+
     .i {
       width: 305px;
       height: 200px;
     }
+
     .cover-link {
       cursor: pointer;
       display: block;
@@ -276,14 +292,16 @@
       z-index: 4;
       background: url(data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEHAAEALAAAAAABAAEAAAICTAEAOw==) repeat;
     }
+
     a {
       color: #5079d9;
       cursor: pointer;
       transition: all .15s ease-out;
       text-decoration: none;
     }
+
     a:hover {
-      box-shadow: inset 0 0 38px rgba(0,0,0,.08);
+      box-shadow: inset 0 0 38px rgba(0, 0, 0, .08);
       transition: all .15s ease;
     }
   }
@@ -313,7 +331,8 @@
     transform-style: preserve-3d;
     transform-origin: 50% 50%;
     transform: rotateY(0deg) rotateX(0deg);
-    & div{
+
+    & div {
       position: relative;
       height: 100%;
       width: 100%;
@@ -367,24 +386,29 @@
     width: 170px;
     height: 225px;
     padding: 0 14px 0 15px;
+
     > div {
       width: 100%;
     }
+
     a {
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       transition: all .3s;
+
       &:hover {
         transform: translateY(-5px);
       }
     }
+
     img {
       width: 130px;
       height: 130px;
       margin: 17px 0;
     }
+
     .sk_item_name {
       color: #999;
       display: block;
@@ -398,16 +422,19 @@
       word-wrap: break-word;
       word-break: break-all;
     }
+
     .sk_item_price {
       padding: 3px 0;
       height: 25px;
     }
+
     .price_new {
       font-size: 18px;
       font-weight: 700;
       margin-right: 8px;
       color: #f10214;
     }
+
     .price_origin {
       color: #999;
       font-size: 12px;
@@ -429,8 +456,10 @@
 
   ul.box {
     display: flex;
+
     li {
       flex: 1;
+
       img {
         display: block;
         width: 305px;
@@ -445,6 +474,7 @@
 
   .hot {
     display: flex;
+
     > div {
       flex: 1;
       width: 25%;
@@ -456,9 +486,11 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+
     .imgbanner {
       width: 50%;
       height: 430px;
+
       .cover-link {
         cursor: pointer;
         display: block;
@@ -470,11 +502,13 @@
         z-index: 4;
         background: url(data:image/gif;base64,R0lGODlhAQABAIAAAP///////yH5BAEHAAEALAAAAAABAAEAAAICTAEAOw==) repeat;
       }
+
       .cover-link:hover {
-        box-shadow: inset 0 0 38px rgba(0,0,0,.08);
+        box-shadow: inset 0 0 38px rgba(0, 0, 0, .08);
         transition: all .15s ease;
       }
     }
+
     img {
       display: block;
       width: 100%;
