@@ -3,7 +3,7 @@
     <div style="">
       <div class="good-img">
         <a @click="openProductDeatil(productId)">
-          <img v-lazy="product.swiper_pics[0]" :alt="product.name" :key="product.id">
+          <img v-lazy="product.swiper_pics[0]" :alt="product.name" :key="productId">
         </a>
       </div>
       <h6 class="good-title" v-html="product.name">{{product.name}}</h6>
@@ -49,7 +49,7 @@
         console.log('detail query product id : ', id)
         this.$router.push({path: 'goodsDetails', query: {productId: id}})
         // 新打开一个标签页
-        // window.open('//' + window.location.host + '/#/goodsDetails?productId=' + id)
+        // window.open('//' + window.location.host + '/goodsDetails?productId=' + id)
       },
       addCart (id, price, name, img) {
         if (!this.showMoveImg) {     // 动画是否在运动
@@ -77,7 +77,11 @@
     computed: {
       ...mapState(['login', 'showMoveImg', 'showCart']),
       productId () {
-        return this.product._id.$oid
+        if (typeof this.product._id === 'string') {
+          return this.product._id
+        } else {
+          return this.product._id.$oid
+        }
       }
     },
     mounted () {

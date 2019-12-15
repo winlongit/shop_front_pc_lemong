@@ -2,12 +2,12 @@
   <div>
     <y-shelf title="我的订单">
       <div slot="content">
-        <div v-loading="loading" element-loading-text="加载中..." v-if="orderList.length" style="min-height: 10vw;">
+        <div v-loading="loading" element-loading-text="加载中..." v-if="orderList.length>0" style="min-height: 10vw;">
           <div v-for="(item,i) in orderList" :key="i">
             <div class="gray-sub-title cart-title">
               <div class="first">
                 <div>
-                  <span class="date" v-text="formateDate(item.create_time.$date)"></span>
+                  <span class="date" v-text="formatDate(item.create_time.$date)"></span>
                   <span class="order-id"> 订单号： {{item._id.$oid}} </span>
                 </div>
                 <div class="f-bc">
@@ -83,7 +83,7 @@
   export default {
     data () {
       return {
-        orderList: [0],
+        orderList: [],
         userId: '',
         orderStatus: '',
         loading: true,
@@ -106,21 +106,23 @@
         this.currentPage = val
         this._orderList()
       },
-      formateDate (timeStampString) {
-        let date = new Date(timeStampString)
+      formatDate (timeStampString) {
+        const offset = new Date().getTimezoneOffset()
+        let date = new Date(timeStampString + offset * 60 * 1000)
         let Y = date.getFullYear() + '-'
         let M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-'
         let D = date.getDate() + ' '
-        let h = date.getHours() + ':'
-        let m = date.getMinutes() + ':'
-        let s = date.getSeconds()
+        let h = (date.getHours() < 10 ? '0' + date.getHours() : date.getHours()) + ':'
+        let m = (date.getMinutes() < 10 ? '0' + date.getMinutes() : date.getMinutes()) + ':'
+        let s = (date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds())
         return (Y + M + D + h + m + s)
       },
       orderPayment (orderId) {
-        window.open(window.location.origin + '#/order/payment?orderId=' + orderId)
+        console.log('order.vue,window.location.origin', window.location.origin)
+        window.open(window.location.origin + '/order/payment?orderId=' + orderId)
       },
       goodsDetails (id) {
-        window.open(window.location.origin + '#/goodsDetails?productId=' + id)
+        window.open(window.location.origin + '/goodsDetails?productId=' + id)
       },
       orderDetail (orderId) {
         this.$router.push({
@@ -146,9 +148,7 @@
       },
       _delOrder (orderId, i) {
         let params = {
-          params: {
-            orderId: orderId
-          }
+          orderId: orderId
         }
         delOrder(params).then(res => {
           if (res.success === true) {

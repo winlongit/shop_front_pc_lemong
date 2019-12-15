@@ -61,7 +61,7 @@ router.beforeEach(function (to, from, next) {
   // TODO 这里需要添加权限控制的代码
   console.log(getStore('login'))
   console.log(getStore('userInfo'))
-  if (!getStore('login')) { // 没登录
+  if (!getStore('login') || getStore('login') === 'false') { // 没登录
     console.log('come to nologin')
     if (whiteList.indexOf(to.path) !== -1) { // 白名单
       next()
@@ -69,6 +69,7 @@ router.beforeEach(function (to, from, next) {
       next('/login')
     }
   } else { //  登录了
+    console.log('登录了')
     if (to.path === '/login') { //  登录了还访问login，sb？ 跳转到首页吧
       next({path: '/'})
     }

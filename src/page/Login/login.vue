@@ -135,7 +135,12 @@
       },
       // 登录返回按钮
       login_back () {
-        this.$router.go(-1)
+        // this.$router.go(-1)
+        // TODO 可以在进入登录页的时候把来源的那个页面记录到 vuex 中，这样就可以跳转之前的页
+        // 登录成功跳转手首页
+        this.$router.push({
+          path: '/'
+        })
       },
       // 登陆时将本地的添加到用户购物车
       login_addCart () {
@@ -183,10 +188,10 @@
               removeStore('buyCart')
             }
             // 试试能不能返回上一页哦
-            this.$router.go(-1)
-            // this.$router.push({
-            //   path: '/'
-            // })
+            // this.$router.go(-1)，这里有一个问题，那就是如果是从 注册过来的，这里登录成功了就又调到注册页了，
+            // TODO 可以在进入登录页的时候把来源的那个页面记录到 vuex 中，这样就可以跳转之前的页 login_back() 同样
+            // 登录成功跳转手首页
+            this.login_back()
           } else {
             // 登录失败，打印登录失败的提示
             this.logintxt = '登录'
@@ -255,7 +260,7 @@
       overflow: visible;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
       position: relative;
-      background-image: url(/static/images/smartisan_4ada7fecea.png);
+      background-image: url(/static/images/winlong/logo.png);
       background-size: 140px;
       background-position: top center;
       background-repeat: no-repeat;

@@ -190,7 +190,7 @@
         })
       },
       goodsDetails (id) {
-        window.open(window.location.origin + '#/goodsDetails?productId=' + id)
+        window.open(window.location.origin + '/goodsDetails?productId=' + id)
       },
       // 全选
       editCheckAll () {

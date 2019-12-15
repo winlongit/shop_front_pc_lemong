@@ -144,7 +144,7 @@
         email: '',
         logoUrl: '/static/images/winlong/logo.png',
         orderId: '',
-        codeUrl: '',
+        codeUrl: null,
         type: '',
         moneySelect: '1.00',
         isCustom: false,
@@ -190,7 +190,7 @@
         this.checkValid()
       },
       goodsDetails (id) {
-        window.open(window.location.origin + '#/goodsDetails?productId=' + id)
+        window.open(window.location.origin + '/goodsDetails?productId=' + id)
       },
       _getOrderDet (orderId) {
         let params = {
@@ -199,6 +199,9 @@
           }
         }
         getOrderDet(params).then(res => {
+          if (!this.codeUrl) {
+            this.codeUrl = res.result.code_url
+          }
           this.cartList = res.result.goodsList
           this.userName = res.result.userName
           this.tel = res.result.tel
@@ -337,7 +340,6 @@
     },
     created () {
       this.userId = getStore('userId')
-      this.codeUrl = this.$route.query.codeUrl
       this.orderId = this.$route.query.orderId
       if (this.orderId) {
         // 拿到orderId后，向后台请求orderId对应的信息，订单详情和收货地址，总额优惠等该订单相关信息。

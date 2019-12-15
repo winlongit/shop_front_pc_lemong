@@ -29,7 +29,7 @@ export const thanksList = (params) => {
 }
 // 首页接口
 export const productHome = (params) => {
-  return http.fetchGet('/goods/home', params)
+  return http.fetchGet('/api/v1/home/get_frame', params)
 }
 // 首页接口 分类小标题List
 export const navList = (params) => {

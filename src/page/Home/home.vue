@@ -38,7 +38,7 @@
           <section class="w mt30 clearfix" v-if="item.type === 2">
             <y-shelf :title="item.name">
               <div slot="content" class="hot">
-                <mall-goods :msg="iitem" v-for="(iitem,j) in item.panelContents" :key="j"></mall-goods>
+                <mall-goods :product="iitem" v-for="(iitem,j) in item.panelContents" :key="j"></mall-goods>
               </div>
             </y-shelf>
           </section>
@@ -51,7 +51,7 @@
                   <img v-lazy="iitem.picUrl">
                   <a class="cover-link"></a>
                 </div>
-                <mall-goods :msg="iitem" v-for="(iitem,j) in item.panelContents" :key="j+'key'"
+                <mall-goods :product="iitem" v-for="(iitem,j) in item.panelContents" :key="j+'key'"
                             v-if="iitem.type != 2 && iitem.type != 3"></mall-goods>
               </div>
             </y-shelf>
@@ -120,7 +120,7 @@
           this.$router.push({
             path: '/goodsDetails',
             query: {
-              productId: item.productId
+              productId: item._id
             }
           })
         } else {

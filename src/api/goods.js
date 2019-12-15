@@ -97,7 +97,7 @@ export const productDet = (params) => {
 }
 // 删除订单
 export const delOrder = (params) => {
-  return http.fetchGet('/member/delOrder', params)
+  return http.fetchPost('/api/v1/order/del_order', params)
 }
 // 商品列表
 export const getSearch = (params) => {

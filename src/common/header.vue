@@ -39,7 +39,7 @@
                       <li class="nav-user-avatar">
                         <div>
                           <!--用户头像-->
-                          <span class="avatar" :style="{backgroundImage:'url('+userInfo.info.file+')'}">
+                          <span class="avatar" :style="{backgroundImage:'url('+userInfo.info.avatar+')'}">
                           </span>
                         </div>
                         <p class="name">{{userInfo.info.username}}</p>
@@ -226,11 +226,11 @@
                   })
                 } */
       },
-      // TODO 跳转到个人中心,先不跳转，这个个人中心也是个大坑
       toUser () {
         // 没有登录，就跳转登录页面
         console.log('toUser,header.vue', this.login)
         if (!this.login) {
+          console.log('toUser,header.vue push /login', this.login)
           this.$router.push({path: '/login'})
         } else {
           this.$router.push({path: '/user'})
@@ -391,7 +391,7 @@
         }
       },
       openProduct (productId) {
-        window.open('//' + window.location.host + '/#/goodsDetails?productId=' + productId)
+        window.open('//' + window.location.host + '/goodsDetails?productId=' + productId)
       },
       _getNavList () {
         navList().then(res => {

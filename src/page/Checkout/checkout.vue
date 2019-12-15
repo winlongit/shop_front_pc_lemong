@@ -196,7 +196,7 @@
         })
       },
       goodsDetails (id) {
-        window.open(window.location.origin + '#/goodsDetails?productId=' + id)
+        window.open(window.location.origin + '/goodsDetails?productId=' + id)
       },
       _getCartList () {
         getCartList({userId: this.userId}).then(res => {
@@ -281,7 +281,7 @@
           // TODO 这里的逻辑先不做后面再补
           console.log(res)
           if (res.message === 'success') {
-            this.payment(res.result.order_id, res.result.code_url)
+            this.payment(res.result.order_id)
           } else {
             this.message(res.message)
             this.submitOrder = '提交订单'
@@ -295,8 +295,8 @@
         this.$router.push({
           path: '/order/payment',
           query: {
-            'orderId': orderId,
-            'codeUrl': codeUrl
+            'orderId': orderId
+            // 'codeUrl': codeUrl
           }
         })
       },

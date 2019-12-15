@@ -152,10 +152,6 @@
       },
       // 价格排序
       sortByPrice (v) {
-        this.$notify.info({
-          title: '排序筛选',
-          message: '抱歉，后台暂不支持该接口，该功能正在开发...'
-        })
         v === 1 ? this.sortType = 2 : this.sortType = 3
         this.sort = v
         this.currentPage = 1

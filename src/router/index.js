@@ -29,7 +29,8 @@ const Wechat = () => import('/page/Order/wechat.vue')
 const QQpay = () => import('/page/Order/qqpay.vue')
 Vue.use(Router)
 export default new Router({
-  base: 'mall',
+  // base: '/mall/',
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -38,7 +39,7 @@ export default new Router({
       redirect: '/home',
       children: [
         // vue路由设置，path后面加/和不加有什么区别？
-        // 去到child的时候，路径是#/child而不是#/fa/child，因为/xx就是根路径。
+        // 去到child的时候，路径是/child而不是/fa/child，因为/xx就是根路径。
         // 而不以斜杠开头的，都会被当成普通的字符串拼到后面。
         {path: 'home', component: Home},
         {path: 'goods', component: GoodS},

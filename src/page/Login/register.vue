@@ -3,7 +3,7 @@
     <div class="wrapper">
       <div class="dialog dialog-shadow" style="display: block; margin-top: -362px;">
         <div class="registered">
-          <h4>注册 XMall 账号</h4>
+          <h4>注册 爱乐盟 账号</h4>
           <div class="content" style="margin-top: 20px;">
             <ul class="common-form">
               <li class="username border-1p">
@@ -40,7 +40,7 @@
             </el-checkbox>
             <div style="margin-bottom: 30px;">
               <y-button
-                :classStyle="registered.userPwd&&registered.userPwd2&&registered.userName&&registxt==='注册'?'main-btn':'disabled-btn'"
+                :classStyle="registered.userPwd&&registered.userPwd2&&registered.userName&&registxt==='注册'&&agreement?'main-btn':'disabled-btn'"
                 :text="registxt"
                 style="margin: 0;width: 100%;height: 48px;font-size: 18px;line-height: 48px"
                 @btnClick="regist"
@@ -51,7 +51,7 @@
             <ul class="common-form pr">
               <!-- <li class="pa" style="left: 0;top: 0;margin: 0;color: #d44d44">{{registered.errMsg}}</li> -->
               <li style="text-align: center;line-height: 48px;margin-bottom: 0;font-size: 12px;color: #999;">
-                <span>如果您已拥有 XMall 账号，则可在此</span>
+                <span>如果您已拥有 爱乐盟 账号，则可在此</span>
                 <a href="javascript:;"
                    style="margin: 0 5px"
                    @click="toLogin">登陆</a>
@@ -154,6 +154,7 @@
         }).then(res => {
           if (res.success === true) {
             this.messageSuccess()
+            // 既然都注册成功了，那就直接登录
             this.toLogin()
           } else {
             this.message(res.message)
@@ -184,7 +185,7 @@
       // }
     },
     mounted () {
-      this.init_geetest()
+      // this.init_geetest()
     },
     components: {
       YFooter,

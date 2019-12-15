@@ -143,8 +143,8 @@
         // 购买还没做呢,后面再搞吧
         // this.$router.push({path: '/checkout', query: {productId, num: this.productNum}})
         this.$notify.info({
-          title: '购买',
-          message: '暂不支持支付，该功能正在开发...'
+          title: '暂不支持直接购买',
+          message: '请加入购物车后再购物车结账...'
         })
       },
       editNum (num) {
