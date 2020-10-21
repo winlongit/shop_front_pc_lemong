@@ -13,6 +13,7 @@ const orderList = () => import('/page/User/children/order.vue')
 const information = () => import('/page/User/children/information.vue')
 const addressList = () => import('/page/User/children/addressList.vue')
 const coupon = () => import('/page/User/children/coupon.vue')
+const myQrcode = () => import('/page/User/children/myQrcode.vue')
 const aihuishou = () => import('/page/User/children/aihuishou.vue')
 const support = () => import('/page/User/children/support.vue')
 const checkout = () => import('/page/Checkout/checkout.vue')
@@ -77,6 +78,7 @@ export default new Router({
         {path: 'information', name: '账户资料', component: information},
         {path: 'addressList', name: '收货地址', component: addressList},
         {path: 'coupon', name: '我的优惠', component: coupon},
+        {path: 'myQrcode', name: '推荐码', component: myQrcode},
         {path: 'support', name: '售后服务', component: support},
         {path: 'aihuishou', name: '以旧换新', component: aihuishou}
       ]

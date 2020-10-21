@@ -54,6 +54,10 @@
                         <router-link to="/user/addressList">收货地址</router-link>
                       </li>
                       <li>
+                        <router-link to="/user/myQrcode">我的推荐码</router-link>
+
+                      </li>
+                      <li>
                         <router-link to="/user/support">售后服务</router-link>
                       </li>
                       <li>

@@ -9,8 +9,15 @@
               <li class="username border-1p">
                 <div style="margin-top: 40px;" class="input">
                   <input type="text"
-                         v-model="registered.userName" placeholder="账号"
+                         v-model="registered.userName" placeholder="登录账号/手机号"
                          @keyup="registered.userName=registered.userName.replace(/[^\w\.\/]/ig,'')">
+                </div>
+              </li>
+              <li v-if="!(referrer === null)">
+                <div class="input">
+                  <h5>推荐人：</h5>
+                  <input type="text" class="referrer_back"
+                         v-model="referrer.username" disabled>
                 </div>
               </li>
               <li>
@@ -85,6 +92,7 @@
           userPwd2: '',
           errMsg: ''
         },
+        referrer: null,
         agreement: false,
         registxt: '注册',
         statusKey: ''
@@ -123,6 +131,7 @@
         let userName = this.registered.userName
         let userPwd = this.registered.userPwd
         let userPwd2 = this.registered.userPwd2
+        let referrerId = this.referrer.userId
         if (!userName || !userPwd || !userPwd2) {
           this.message('账号密码不能为空!')
           this.registxt = '注册'
@@ -146,7 +155,8 @@
         // }
         register({
           userName,
-          userPwd
+          userPwd,
+          referrerId
           // challenge: result.geetest_challenge,
           // validate: result.geetest_validate,
           // seccode: result.geetest_seccode,
@@ -184,8 +194,15 @@
       //   })
       // }
     },
-    mounted () {
+    created () {
+      let query = this.$route.query
+      if (query.username && query.userId) {
+        this.referrer = query
+      }
       // this.init_geetest()
+    },
+    mounted () {
+      // console.log(process.env.WEB_ROOT)
     },
     components: {
       YFooter,
@@ -289,7 +306,9 @@
       }
     }
   }
-
+  .referrer_back {
+    background-color: #FFEBCD;    //橙色
+  }
   .dialog-shadow,
   .v2 .bbs .dialog-shadow,
   .v2 .dialog-shadow {

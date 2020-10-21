@@ -98,7 +98,7 @@
       open4 () {
         this.$notify.info({
           title: '支付方式.',
-          message: '暂不支持支付，该功能正在开发...'
+          message: '支持微信支付'
         })
       },
       open5 () {
