@@ -176,7 +176,7 @@
             // 登录成功
             setStore('userId', res.result.id)
             this.RECORD_USERINFO({info: res.result})
-            console.log('登录成功了，到了这里，userId：', getStore('userId'))
+            console.log('登录成功了，到了这里，userId：', getStore('userId'), res.result)
             // 登录后添加当前缓存中的购物车，如果当前购物车内有东西，就把购物车的东西添加到后台
             if (this.cart.length) {
               for (var i = 0; i < this.cart.length; i++) {

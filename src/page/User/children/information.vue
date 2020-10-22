@@ -2,6 +2,9 @@
   <div>
     <y-shelf title="账户资料">
       <div slot="content">
+        <div class="info-box">
+          用户类型： {{userInfo.info.userType}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;推荐人： {{userInfo.info.referrer}}
+        </div>
         <div class="avatar-box">
           <div class=img-box><img :src="userInfo.info.avatar" alt=""></div>
           <div class="r-box">
@@ -9,16 +12,17 @@
             <y-button text="上传头像" classStyle="main-btn" style="margin: 0;" @btnClick="editAvatar()"></y-button>
           </div>
         </div>
+
         <div class="edit-avatar" v-if="editAvatarShow">
           <y-shelf title="设置头像">
         <span slot="right">
-                              <span class="close" @click="editAvatarShow=false">
-                        <svg t="1501234940517" class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
-                             xmlns="http://www.w3.org/2000/svg" p-id="3014" xmlns:xlink="http://www.w3.org/1999/xlink"
-                             width="20" height="20"><path
-                          d="M941.576 184.248l-101.824-101.824L512 410.176 184.248 82.424 82.424 184.248 410.168 512l-327.744 327.752 101.824 101.824L512 613.824l327.752 327.752 101.824-101.824L613.832 512z"
-                          fill="#cdcdcd" p-id="3015"></path></svg>
-                    </span>
+          <span class="close" @click="editAvatarShow=false">
+            <svg t="1501234940517" class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+                 xmlns="http://www.w3.org/2000/svg" p-id="3014" xmlns:xlink="http://www.w3.org/1999/xlink"
+                 width="20" height="20"><path
+                 d="M941.576 184.248l-101.824-101.824L512 410.176 184.248 82.424 82.424 184.248 410.168 512l-327.744 327.752 101.824 101.824L512 613.824l327.752 327.752 101.824-101.824L613.832 512z"
+                 fill="#cdcdcd" p-id="3015"></path></svg>
+          </span>
         </span>
             <div slot="content" class="content">
               <div class="edit-l">
@@ -195,6 +199,23 @@
 </script>
 <style lang="scss" scoped>
   @import "../../../assets/style/mixin";
+
+    .info-box {
+    height: 124px;
+    display: flex;
+    margin: 0 30px 30px;
+    line-height: 30px;
+    display: flex;
+    align-items: center;
+    .r-box {
+      margin-left: 20px;
+      h3 {
+        font-size: 18px;
+        font-weight: 400;
+        color: #333;
+      }
+    }
+  }
 
   .avatar-box {
     height: 124px;
