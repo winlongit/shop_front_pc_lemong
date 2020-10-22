@@ -10,10 +10,11 @@
                 <div style="margin-top: 40px;" class="input">
                   <input type="text"
                          v-model="registered.userName" placeholder="登录账号/手机号"
-                         @keyup="registered.userName=registered.userName.replace(/[^\w\.\/]/ig,'')">
+                         >
+<!--                          @keyup="registered.userName=registered.userName.replace(/[^\w\.\/]/ig,'')">-->
                 </div>
               </li>
-              <li v-if="!(referrer === null)">
+              <li v-if="!(referrer.userId === null)">
                 <div class="input">
                   <h5>推荐人：</h5>
                   <input type="text" class="referrer_back"
@@ -92,7 +93,10 @@
           userPwd2: '',
           errMsg: ''
         },
-        referrer: null,
+        referrer: {
+          username: null,
+          userId: null
+        },
         agreement: false,
         registxt: '注册',
         statusKey: ''
